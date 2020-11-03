@@ -1,0 +1,30 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "A CLI for an employee CMS using MySQL",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/galluk/employee-tracker.git"
+  },
+  "author": "Luke Gallagher",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/galluk/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/galluk/employee-tracker#readme",
+  "dependencies": {
+    "asciiart-logo": "^0.2.6",
+    "console.table": "^0.10.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
