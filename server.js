@@ -11,27 +11,8 @@ const dbEngine = require('./db/engine');
 // set up the logo
 const logo = require('asciiart-logo');
 const config = require('./package.json');
+const { ADD_DEPARTMENT } = require("./db/dbScripts");
 console.log(logo(config).render());
-
-// const connection = mysql.createConnection({
-//     host: "localhost",
-//     // use the default port number
-//     port: 3306,
-//     // admin user
-//     user: "root",
-//     // admin password
-//     password: "admin2020",
-//     // name of db
-//     database: "employees_db"
-// });
-
-// connection.connect(err => {
-//     if (err) throw err;
-//     console.log("Connected as id " + connection.threadId);
-//     dbEngine = new Engine(connection);
-//     runMenu();
-//     // connection.end();
-// });
 
 function init() {
     if (connection) {
@@ -69,24 +50,37 @@ function runMenu() {
         .then(async (answer) => {
             switch (answer.action) {
                 case "View All Employees":
-                    dbEngine.selectData(appConsts.EMPLOYEE_STR).then((data) => {
-                        console.table(data);
-                        runMenu();
-                    });
+                    dbEngine.selectData(appConsts.EMPLOYEE_STR)
+                        .then((data) => {
+                            console.table(data);
+                            runMenu();
+                        })
+                        .catch((err) => {
+                            console.log('The following error occured getting Employees: \n', err.message);
+                            runMenu();
+                        });
                     break;
 
                 case "View All Roles":
                     dbEngine.selectData(appConsts.ROLE_STR).then((data) => {
                         console.table(data);
                         runMenu();
-                    });
+                    })
+                        .catch((err) => {
+                            console.log('The following error occured getting Roles: \n', err.message);
+                            runMenu();
+                        });
                     break;
 
                 case "View All Departments":
                     dbEngine.selectData(appConsts.DEPARTMENT_STR).then((data) => {
                         console.table(data);
                         runMenu();
-                    });
+                    })
+                        .catch((err) => {
+                            console.log('The following error occured getting Departments: \n', err.message);
+                            runMenu();
+                        });
                     break;
 
                 case "Add Employee":
@@ -99,29 +93,65 @@ function runMenu() {
 
                 case "Add Role":
                     questions.askNewRole().then(async data => {
-                        await dbEngine.insertNewRole(data.title, data.salary, data.dept);
-                        runMenu();
+                        dbEngine.insertNewRole(data.title, data.salary, data.dept)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`${data.title} sucessfully added.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured adding new Role: \n', err.message);
+                                runMenu();
+                            })
                     });
                     break;
 
                 case "Add Department":
                     questions.askNewDepartment().then(async data => {
-                        await dbEngine.insertNewDepartment(data.name);
-                        runMenu();
+                        dbEngine.insertNewDepartment(data.name)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`${data.name} sucessfully added.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured adding new Department: \n', err.message);
+                                runMenu();
+                            })
                     });
                     break;
 
                 case "Update Employee Role":
                     questions.askUpdateEmployeeRole().then(async data => {
-                        await dbEngine.updateEmployeeRole(data.employee, data.role);
-                        runMenu();
+                        dbEngine.updateEmployeeRole(data.employee, data.role)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`Employee Role sucessfully updated.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured updating Employee Role: \n', err.message);
+                                runMenu();
+                            })
                     });
                     break;
 
                 case "Update Employee Manager":
                     questions.askUpdateEmployeeManager().then(async data => {
-                        await dbEngine.updateEmployeeManager(data.employee, data.manager);
-                        runMenu();
+                        await dbEngine.updateEmployeeManager(data.employee, data.manager)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`Employee Manager sucessfully updated.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured updating Employee Manager: \n', err.message);
+                                runMenu();
+                            })
                     });
                     break;
 
