@@ -17,6 +17,8 @@ const SELECT_ALL_ROLES =
 
 const ADD_ROLE = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
 
+const DELETE_ROLE = `DELETE FROM role WHERE id = ?`;
+
 // employee scripts
 const SELECT_ALL_EMPLOYEES =
     `SELECT e.id, e.first_name, e.last_name, role.title, department.name as department, 
@@ -29,6 +31,8 @@ const SELECT_ALL_EMPLOYEES =
 
 const ADD_EMPLOYEE = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)`;
 
+const DELETE_EMPLOYEE = `DELETE FROM employee WHERE id = ?`;
+
 const UPDATE_EMPLOYEE_ROLE = `UPDATE employee SET role_id = ? WHERE id = ?`;
 
 const UPDATE_EMPLOYEE_MANAGER = `UPDATE employee SET manager_id = ? WHERE id = ?`;
@@ -39,8 +43,10 @@ module.exports = {
     ADD_DEPARTMENT,
     SELECT_ALL_ROLES,
     ADD_ROLE,
+    DELETE_ROLE,
     SELECT_ALL_EMPLOYEES,
     ADD_EMPLOYEE,
+    DELETE_EMPLOYEE,
     UPDATE_EMPLOYEE_ROLE,
     UPDATE_EMPLOYEE_MANAGER,
     SELECT_DEPARTMENT_BUDGETS

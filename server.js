@@ -42,6 +42,9 @@ function runMenu() {
                 "Add Employee",
                 "Add Role",
                 "Add Department",
+                "Delete Employee",
+                "Delete Role",
+                "Delete Department",
                 "Update Employee Role",
                 "Update Employee Manager",
                 "View utilized Department budget",
@@ -119,6 +122,38 @@ function runMenu() {
                             })
                             .catch((err) => {
                                 console.log('The following error occured adding new Department: \n', err.message);
+                                runMenu();
+                            })
+                    });
+                    break;
+
+                case "Delete Employee":
+                    questions.askDeleteEmployee().then(async data => {
+                        dbEngine.deleteEmployee(data.employee)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`Employee sucessfully deleted.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured deleting Employee: \n', err.message);
+                                runMenu();
+                            })
+                    });
+                    break;
+
+                case "Delete Role":
+                    questions.askDeleteRole().then(async data => {
+                        dbEngine.deleteRole(data.role)
+                            .then((result) => {
+                                if (result.affectedRows === 1) {
+                                    console.log(`Role sucessfully deleted.`);
+                                }
+                                runMenu();
+                            })
+                            .catch((err) => {
+                                console.log('The following error occured deleting Role: \n', err.message);
                                 runMenu();
                             })
                     });

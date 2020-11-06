@@ -56,10 +56,32 @@ class Engine {
         });
     }
 
+    deleteRole(roleId) {
+        return new Promise(function (resolve, reject) {
+            if (roleId) {
+                connection.query(dbScripts.DELETE_ROLE, [roleId], function (error, result) {
+                    if (error) return reject(error);
+                    resolve(result);
+                });
+            }
+        });
+    }
+
     insertNewEmployee(fName, lName, roleId, managerId) {
         return new Promise(function (resolve, reject) {
             if (fName && lName) {
                 connection.query(dbScripts.ADD_EMPLOYEE, [fName, lName, roleId, managerId], function (error, result) {
+                    if (error) return reject(error);
+                    resolve(result);
+                });
+            }
+        });
+    }
+
+    deleteEmployee(employeeId) {
+        return new Promise(function (resolve, reject) {
+            if (employeeId) {
+                connection.query(dbScripts.DELETE_EMPLOYEE, [employeeId], function (error, result) {
                     if (error) return reject(error);
                     resolve(result);
                 });
