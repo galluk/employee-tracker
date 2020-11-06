@@ -44,6 +44,7 @@ function runMenu() {
                 "Add Department",
                 "Update Employee Role",
                 "Update Employee Manager",
+                "View utilized Department budget",
                 "exit"
             ]
         })
@@ -153,6 +154,18 @@ function runMenu() {
                                 runMenu();
                             })
                     });
+                    break;
+
+                case "View utilized Department budget":
+                    dbEngine.selectData(appConsts.DEPARTMENT_BUDGET_STR)
+                        .then((data) => {
+                            console.table(data);
+                            runMenu();
+                        })
+                        .catch((err) => {
+                            console.log('The following error occured getting Department budgets: \n', err.message);
+                            runMenu();
+                        });
                     break;
 
                 case "exit":

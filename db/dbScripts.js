@@ -1,6 +1,12 @@
 // department scripts
 const SELECT_ALL_DEPARTMENTS = `SELECT * FROM department`;
 const ADD_DEPARTMENT = `INSERT INTO department (name) VALUES (?)`;
+const SELECT_DEPARTMENT_BUDGETS =
+    `SELECT d.name AS department, COUNT(e.id) AS num_employees, SUM(role.salary) AS budget
+    FROM employee e
+    INNER JOIN role ON (role.id = e.role_id)
+    INNER JOIN department d ON (d.id = role.department_id)
+    GROUP BY department`;
 
 // role scripts
 const SELECT_ALL_ROLES =
@@ -36,5 +42,6 @@ module.exports = {
     SELECT_ALL_EMPLOYEES,
     ADD_EMPLOYEE,
     UPDATE_EMPLOYEE_ROLE,
-    UPDATE_EMPLOYEE_MANAGER
+    UPDATE_EMPLOYEE_MANAGER,
+    SELECT_DEPARTMENT_BUDGETS
 }

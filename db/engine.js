@@ -21,6 +21,10 @@ class Engine {
                 case appConsts.DEPARTMENT_STR:
                     queryStr = dbScripts.SELECT_ALL_DEPARTMENTS;
                     break;
+
+                case appConsts.DEPARTMENT_BUDGET_STR:
+                    queryStr = dbScripts.SELECT_DEPARTMENT_BUDGETS;
+                    break;
             }
 
             connection.query(queryStr, function (error, result) {
