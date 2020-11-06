@@ -1,36 +1,49 @@
 // pull in required internal  packages
-const mysql = require("mysql");
 const inquirer = require("inquirer");
-const util = require("util");
+const conTable = require('console.table');
 
 // pull in required internal  packages
+const connection = require('./db/dbConnection');
 const questions = require('./lib/questions');
+const appConsts = require('./const/conts');
+const dbEngine = require('./db/engine');
 
 // set up the logo
 const logo = require('asciiart-logo');
 const config = require('./package.json');
-const { insertNewDepartment, newDepartment } = require("./lib/questions");
 console.log(logo(config).render());
 
+// const connection = mysql.createConnection({
+//     host: "localhost",
+//     // use the default port number
+//     port: 3306,
+//     // admin user
+//     user: "root",
+//     // admin password
+//     password: "admin2020",
+//     // name of db
+//     database: "employees_db"
+// });
 
-const connection = mysql.createConnection({
-    host: "localhost",
-    // use the default port number
-    port: 3306,
-    // admin user
-    user: "root",
-    // admin password
-    password: "admin2020",
-    // name of db
-    database: "employees_db"
-});
+// connection.connect(err => {
+//     if (err) throw err;
+//     console.log("Connected as id " + connection.threadId);
+//     dbEngine = new Engine(connection);
+//     runMenu();
+//     // connection.end();
+// });
 
-connection.connect(err => {
-    if (err) throw err;
-    console.log("Connected as id " + connection.threadId);
-    runMenu();
-    // connection.end();
-});
+function init() {
+    if (connection) {
+        connection.connect(err => {
+            if (err) throw err;
+            console.log("Connected as id " + connection.threadId);
+            runMenu();
+        });
+    } else {
+        init();
+    }
+}
 
 // show the main menu to the user
 function runMenu() {
@@ -49,60 +62,65 @@ function runMenu() {
                 "Add Role",
                 "Add Department",
                 "Update Employee Role",
-                //   "Update Employee Manager",
+                "Update Employee Manager",
                 "exit"
             ]
         })
-        .then(async function (answer) {
+        .then(async (answer) => {
             switch (answer.action) {
                 case "View All Employees":
-                    questions.selectData(connection, 'E').then((data) => {
+                    dbEngine.selectData(appConsts.EMPLOYEE_STR).then((data) => {
                         console.table(data);
                         runMenu();
                     });
-                    // let employees = await questions.selectDataAsync(connection, 'E');
-                    // if (employees) {
-                    //     console.table(employees);
-                    // }
-                    // runMenu();
                     break;
 
                 case "View All Roles":
-                    // await questions.selectData(connection, 'R');
-                    questions.selectData(connection, 'R').then((data) => {
+                    dbEngine.selectData(appConsts.ROLE_STR).then((data) => {
                         console.table(data);
                         runMenu();
                     });
                     break;
 
                 case "View All Departments":
-                    // await questions.selectData(connection, 'D');
-                    questions.selectData(connection, 'D').then((data) => {
+                    dbEngine.selectData(appConsts.DEPARTMENT_STR).then((data) => {
                         console.table(data);
                         runMenu();
                     });
                     break;
 
                 case "Add Employee":
-                    questions.newEmployee(connection).then((data) => {
-                        console.log('New Employee added: ' + data);
+                    questions.askNewEmployee().then(async data => {
+                        // console.log(data);
+                        await dbEngine.insertNewEmployee(data.firstName, data.lastName, data.role, data.manager);
                         runMenu();
                     });
                     break;
 
                 case "Add Role":
-                    questions.newRole(connection);
-                    runMenu();
+                    questions.askNewRole().then(async data => {
+                        await dbEngine.insertNewRole(data.title, data.salary, data.dept);
+                        runMenu();
+                    });
                     break;
 
                 case "Add Department":
-                    questions.newDepartment(connection);
-                    runMenu();
+                    questions.askNewDepartment().then(async data => {
+                        await dbEngine.insertNewDepartment(data.name);
+                        runMenu();
+                    });
                     break;
 
                 case "Update Employee Role":
-                    questions.updateEmployeeRole(connection).then((data) => {
-                        console.log('Employee updated: ' + data);
+                    questions.askUpdateEmployeeRole().then(async data => {
+                        await dbEngine.updateEmployeeRole(data.employee, data.role);
+                        runMenu();
+                    });
+                    break;
+
+                case "Update Employee Manager":
+                    questions.askUpdateEmployeeManager().then(async data => {
+                        await dbEngine.updateEmployeeManager(data.employee, data.manager);
                         runMenu();
                     });
                     break;
@@ -113,3 +131,5 @@ function runMenu() {
             }
         });
 }
+
+init();
