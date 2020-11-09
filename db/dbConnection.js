@@ -10,7 +10,7 @@ const createMySQLConnection = async () => {
         // admin user
         user: "root",
         // admin password
-        password: "admin2020",
+        password: "",
         // name of db
         database: "employees_db"
     });
