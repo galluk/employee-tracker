@@ -14,6 +14,10 @@ class Engine {
                     queryStr = dbScripts.SELECT_ALL_EMPLOYEES;
                     break;
 
+                case appConsts.EMPLOYEE_COMBINED_STR:
+                    queryStr = dbScripts.SELECT_ALL_EMPLOYEES_WITH_ROLE_MANAGER;
+                    break;
+
                 case appConsts.ROLE_STR:
                     queryStr = dbScripts.SELECT_ALL_ROLES;
                     break;
@@ -45,10 +49,42 @@ class Engine {
         });
     }
 
+    // return the number of employees assigned to a the given role
+    countDepartmentEmployees(deptId) {
+        return new Promise(function (resolve, reject) {
+            connection.query(dbScripts.COUNT_EMPLOYEES_IN_DEPARTMENT, [deptId], function (error, result) {
+                if (error) return reject(error);
+                resolve(result);
+            });
+        });
+    }
+
+    insertNewEmployee(fName, lName, roleId, managerId) {
+        return new Promise(function (resolve, reject) {
+            if (fName && lName) {
+                connection.query(dbScripts.ADD_EMPLOYEE, [fName, lName, roleId, managerId], function (error, result) {
+                    if (error) return reject(error);
+                    resolve(result);
+                });
+            }
+        });
+    }
+
     insertNewRole(title, salary, deptId) {
         return new Promise(function (resolve, reject) {
             if (title) {
                 connection.query(dbScripts.ADD_ROLE, [title, salary, deptId], function (error, result) {
+                    if (error) return reject(error);
+                    resolve(result);
+                });
+            }
+        });
+    }
+
+    deleteDepartment(departmentId) {
+        return new Promise(function (resolve, reject) {
+            if (departmentId) {
+                connection.query(dbScripts.DELETE_DEPARTMENT, [departmentId], function (error, result) {
                     if (error) return reject(error);
                     resolve(result);
                 });
@@ -64,6 +100,16 @@ class Engine {
                     resolve(result);
                 });
             }
+        });
+    }
+
+    // return the number of employees assigned to a the given role
+    countRoleEmployees(roleId) {
+        return new Promise(function (resolve, reject) {
+            connection.query(dbScripts.COUNT_EMPLOYEES_IN_ROLE, [roleId], function (error, result) {
+                if (error) return reject(error);
+                resolve(result);
+            });
         });
     }
 

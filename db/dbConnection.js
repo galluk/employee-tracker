@@ -1,16 +1,27 @@
 const mysql = require("mysql");
 
-const connection = mysql.createConnection({
-    host: "localhost",
-    // use the default port number
-    port: 3306,
-    // admin user
-    user: "root",
-    // admin password
-    password: "admin2020",
-    // name of db
-    database: "employees_db"
-});
+var connection;
+
+const createMySQLConnection = async () => {
+    connection = mysql.createConnection({
+        host: "localhost",
+        // use the default port number
+        port: 3306,
+        // admin user
+        user: "root",
+        // admin password
+        password: "admin2020",
+        // name of db
+        database: "employees_db"
+    });
+}
+
+
+const initialise = async () => {
+    await createMySQLConnection();
+}
+
+initialise();
 
 // connection.connect(err => {
 //     if (err) throw err;

@@ -11,18 +11,15 @@ const dbEngine = require('./db/engine');
 // set up the logo
 const logo = require('asciiart-logo');
 const config = require('./package.json');
-const { ADD_DEPARTMENT } = require("./db/dbScripts");
 console.log(logo(config).render());
 
 function init() {
     if (connection) {
         connection.connect(err => {
             if (err) throw err;
-            console.log("Connected as id " + connection.threadId);
+            console.log("Successfully connected to the database...");
             runMenu();
         });
-    } else {
-        init();
     }
 }
 
@@ -37,8 +34,6 @@ function runMenu() {
                 "View All Employees",
                 "View All Roles",
                 "View All Departments",
-                //   "View All Employees by Department",
-                //   "View All Employees by Manager",
                 "Add Employee",
                 "Add Role",
                 "Add Department",
@@ -54,7 +49,7 @@ function runMenu() {
         .then(async (answer) => {
             switch (answer.action) {
                 case "View All Employees":
-                    dbEngine.selectData(appConsts.EMPLOYEE_STR)
+                    dbEngine.selectData(appConsts.EMPLOYEE_COMBINED_STR)
                         .then((data) => {
                             console.table(data);
                             runMenu();
@@ -145,17 +140,41 @@ function runMenu() {
 
                 case "Delete Role":
                     questions.askDeleteRole().then(async data => {
-                        dbEngine.deleteRole(data.role)
-                            .then((result) => {
-                                if (result.affectedRows === 1) {
-                                    console.log(`Role sucessfully deleted.`);
-                                }
-                                runMenu();
-                            })
-                            .catch((err) => {
-                                console.log('The following error occured deleting Role: \n', err.message);
-                                runMenu();
-                            })
+                        if (data.action) {
+                            dbEngine.deleteRole(data.roleId)
+                                .then((result) => {
+                                    if (result.affectedRows === 1) {
+                                        console.log(`Role sucessfully deleted.`);
+                                    }
+                                    runMenu();
+                                })
+                                .catch((err) => {
+                                    console.log('The following error occured deleting Role: \n', err.message);
+                                    runMenu();
+                                });
+                        } else {
+                            runMenu();
+                        }
+                    });
+                    break;
+
+                case "Delete Department":
+                    questions.askDeleteDepartment().then(async data => {
+                        if (data.action) {
+                            dbEngine.deleteDepartment(data.departmentId)
+                                .then((result) => {
+                                    if (result.affectedRows === 1) {
+                                        console.log(`Department sucessfully deleted.`);
+                                    }
+                                    runMenu();
+                                })
+                                .catch((err) => {
+                                    console.log('The following error occured deleting Department: \n', err.message);
+                                    runMenu();
+                                });
+                        } else {
+                            runMenu();
+                        }
                     });
                     break;
 
